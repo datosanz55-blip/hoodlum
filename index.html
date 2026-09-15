@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="day">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>STUDIO — веб-дизайнер и разработчик сайтов</title>
+<meta name="description" content="Портфолио веб-дизайнера и разработчика. Сайты, лендинги, интернет-магазины под ключ. Откройте папку и посмотрите работы.">
+<meta name="theme-color" content="#8fb6d9">
+<meta property="og:type" content="website">
+<meta property="og:title" content="STUDIO — веб-дизайнер и разработчик сайтов">
+<meta property="og:description" content="Портфолио в виде рабочего стола посреди поля. Откройте папки и посмотрите кейсы.">
+<meta property="og:image" content="assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M6 18a6 6 0 0 1 6-6h13l6 7h21a6 6 0 0 1 6 6v21a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6z' fill='%235aa9f8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ══ BOOT ══════════════════════════════════════════════ -->
+<div class="boot" id="boot">
+  <div class="boot__inner">
+    <div class="boot__logo" id="bootLogo">STUDIO</div>
+    <div class="boot__bar"><i id="bootBar"></i></div>
+    <div class="boot__log" id="bootLog"></div>
+  </div>
+  <button class="boot__skip" id="bootSkip" type="button">пропустить</button>
+</div>
+
+<!-- ══ MENUBAR ═══════════════════════════════════════════ -->
+<header class="menubar" id="menubar" hidden>
+  <div class="menubar__left">
+    <button class="mb-item mb-item--logo" id="mbLogo" type="button" aria-haspopup="true">
+      <span class="mb-dot"></span><span class="mb-name" id="mbName">STUDIO</span>
+    </button>
+    <span class="mb-item mb-item--ghost" id="mbActive">Finder</span>
+  </div>
+  <div class="menubar__right">
+    <button class="mb-chip" id="btnMusic" type="button" aria-pressed="false">
+      <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span class="mb-chip__k">MUSIC</span><span class="mb-chip__v" id="musicState">OFF</span>
+    </button>
+    <button class="mb-chip" id="btnTheme" type="button">
+      <span class="mb-orb" aria-hidden="true"></span>
+      <span class="mb-chip__k">LIGHT</span><span class="mb-chip__v" id="themeState">DAY</span>
+    </button>
+    <span class="mb-chip mb-chip--static"><span class="mb-chip__v" id="clock">--:--</span></span>
+  </div>
+</header>
+
+<!-- ══ DESKTOP ═══════════════════════════════════════════ -->
+<main class="desktop" id="desktop" hidden>
+
+  <!-- wallpaper: SVG scene, overridden by assets/img/wallpaper.png if present -->
+  <div class="scene" id="scene" aria-hidden="true">
+    <img class="scene__photo" id="scenePhoto" alt="" src="assets/img/wallpaper.png">
+    <svg class="scene__svg" id="sceneSvg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   class="sky-a"/>
+          <stop offset="55%"  class="sky-b"/>
+          <stop offset="100%" class="sky-c"/>
+        </linearGradient>
+        <radialGradient id="gSun" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" class="sun-a"/><stop offset="60%" class="sun-b"/><stop offset="100%" class="sun-c"/>
+        </radialGradient>
+        <linearGradient id="gField" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" class="fld-a"/><stop offset="100%" class="fld-b"/>
+        </linearGradient>
+        <radialGradient id="gCrt" cx="50%" cy="45%" r="60%">
+          <stop offset="0%" class="crt-a"/><stop offset="100%" class="crt-b"/>
+        </radialGradient>
+        <filter id="fSoft" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="26"/>
+        </filter>
+        <filter id="fGlow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="14"/>
+        </filter>
+      </defs>
+
+      <rect class="l-sky" x="-200" y="-100" width="2000" height="1100" fill="url(#gSky)"/>
+
+      <g class="l-stars" id="lStars"></g>
+
+      <g class="l-sun" id="lSun">
+        <circle class="sun-glow" cx="1210" cy="250" r="190" fill="url(#gSun)" filter="url(#fSoft)"/>
+        <circle class="sun-core" cx="1210" cy="250" r="62"/>
+      </g>
+
+      <g class="l-clouds" id="lClouds"></g>
+      <g class="l-birds" id="lBirds"></g>
+
+      <!-- hills -->
+      <path class="l-hill3" d="M-200 612 C 120 540 300 596 520 572 C 760 546 900 600 1140 566 C 1360 536 1560 588 1800 556 L1800 960 L-200 960 Z"/>
+      <path class="l-hill2" d="M-200 668 C 160 604 340 664 620 640 C 880 618 1040 672 1300 638 C 1500 612 1660 656 1800 634 L1800 960 L-200 960 Z"/>
+      <g class="l-trees" id="lTrees"></g>
+      <path class="l-field" d="M-200 720 C 240 672 520 716 820 700 C 1140 682 1420 722 1800 692 L1800 960 L-200 960 Z" fill="url(#gField)"/>
+
+      <!-- ── the desk scene ─────────────────────────── -->
+      <g class="l-set" id="lSet">
+        <ellipse class="set-shadow" cx="1080" cy="794" rx="360" ry="24"/>
+
+        <!-- chair -->
+        <g class="set-chair">
+          <path class="ch-back" d="M782 524 q-42 2 -43 40 l-3 118 q-1 20 22 20 l26 0 z"/>
+          <rect class="ch-seat" x="748" y="686" width="124" height="20" rx="10"/>
+          <rect class="ch-post" x="798" y="704" width="15" height="62" rx="7"/>
+          <path class="ch-base" d="M752 788 L806 764 L862 788"/>
+          <path class="ch-base" d="M772 756 L806 765 L844 754"/>
+          <circle class="ch-wheel" cx="750" cy="792" r="8"/>
+          <circle class="ch-wheel" cx="864" cy="792" r="8"/>
+        </g>
+
+        <!-- person: side profile, facing the screen -->
+        <g class="set-guy" id="setGuy">
+          <!-- far leg -->
+          <path class="guy-leg guy-leg--far" d="M816 652 q62 -4 104 8 q16 4 15 20 l-5 96 q-1 13 -15 12 q-14 -1 -13 -14 l4 -84 q0 -8 -10 -10 q-40 -8 -80 -4 z"/>
+          <!-- torso -->
+          <path class="guy-body" d="M800 522 q40 -16 68 6 q16 10 19 30 l14 90 q3 20 -18 22 l-66 6 q-22 2 -24 -20 l-6 -92 q-2 -28 13 -42 z"/>
+          <!-- near arm reaching to the keyboard -->
+          <path class="guy-arm" d="M852 540 q28 8 36 38 l12 40 q4 14 20 17 l64 10 q15 2 12 16 q-3 14 -18 12 l-70 -12 q-33 -6 -43 -36 l-12 -40 q-5 -14 -19 -18 z"/>
+          <!-- neck -->
+          <path class="guy-neck" d="M810 490 q20 14 40 6 l6 28 l-44 10 z"/>
+          <!-- head in profile, with nose and chin -->
+          <path class="guy-head" d="M806 506 q-16 -14 -16 -38 q0 -20 4 -34 q8 -28 40 -30 q30 -2 40 22 q7 18 4 34 q-2 10 3 14 q7 5 -2 9 l-12 5 q-5 2 -4 8 l2 12 q1 8 -8 9 l-14 2 q-6 1 -6 8 l0 12 z"/>
+          <!-- hair -->
+          <path class="guy-hair" d="M788 470 q-10 -58 34 -70 q46 -12 64 16 q10 15 6 30 q-3 12 -8 4 q-8 -22 -30 -22 q-12 0 -20 10 q-9 11 -24 8 q-11 -2 -10 16 q1 12 -5 16 q-6 3 -7 -8 z"/>
+          <!-- near leg -->
+          <path class="guy-leg" d="M812 656 q66 -6 112 10 q17 5 16 22 l-6 98 q-1 14 -16 13 q-15 -1 -14 -15 l5 -86 q1 -9 -11 -12 q-44 -10 -88 -6 z"/>
+        </g>
+
+        <!-- desk -->
+        <g class="set-desk">
+          <rect class="dk-top" x="898" y="614" width="534" height="19" rx="5"/>
+          <rect class="dk-lip" x="898" y="631" width="534" height="9" rx="4"/>
+          <rect class="dk-leg" x="1012" y="638" width="17" height="156" rx="6"/>
+          <rect class="dk-leg" x="1398" y="638" width="17" height="156" rx="6"/>
+          <rect class="dk-brace" x="1024" y="712" width="380" height="9" rx="4"/>
+        </g>
+
+        <!-- CRT in side view: the glow falls toward the person -->
+        <g class="set-crt">
+          <path class="crt-spill" d="M1112 470 L940 508 L940 606 L1112 606 Z" filter="url(#fSoft)"/>
+          <rect class="crt-stand" x="1150" y="596" width="122" height="18" rx="6"/>
+          <path class="crt-body" d="M1132 462 q0 -16 18 -16 l128 0 q18 0 18 16 l0 120 q0 16 -18 16 l-128 0 q-18 0 -18 -16 z"/>
+          <path class="crt-face" d="M1112 470 q-6 0 -6 12 l0 104 q0 12 6 12 l26 0 l0 -128 z"/>
+          <path class="crt-screen" d="M1114 482 q0 -6 6 -6 l14 0 l0 108 l-14 0 q-6 0 -6 -6 z" fill="url(#gCrt)"/>
+          <path class="crt-flare" d="M1114 482 q0 -6 6 -6 l14 0 l0 108 l-14 0 q-6 0 -6 -6 z" filter="url(#fGlow)"/>
+          <g class="crt-vents">
+            <path d="M1248 478 h34M1248 492 h34M1248 506 h34M1248 520 h34"/>
+          </g>
+          <circle class="crt-led" cx="1122" cy="600" r="4"/>
+          <path class="pr-cable" d="M1290 578 q34 42 12 92 q-20 46 26 66"/>
+        </g>
+
+        <!-- desk clutter -->
+        <g class="set-props">
+          <path class="pr-kbd" d="M948 602 l128 -7 l3 13 l-128 7 z"/>
+          <path class="pr-mouse" d="M1092 600 q14 -2 15 8 q1 9 -13 10 q-12 1 -13 -8 q-1 -9 11 -10 z"/>
+          <path class="pr-lamp" d="M1414 614 l-3 -92 q-1 -24 -27 -22 l-52 4"/>
+          <path class="pr-lampshade" d="M1300 490 l60 -4 l-12 34 l-30 2 z"/>
+          <circle class="pr-lampglow" cx="1330" cy="540" r="44" filter="url(#fGlow)"/>
+          <rect class="pr-cup" x="1352" y="578" width="26" height="36" rx="5"/>
+          <rect class="pr-cup" x="1386" y="588" width="20" height="26" rx="4"/>
+          <path class="pr-paper" d="M1330 606 l66 -4 l1 10 l-66 4 z"/>
+          <g class="pr-plant">
+            <path class="pl-pot" d="M1440 760 l42 0 l-6 32 l-30 0 z"/>
+            <path class="pl-leaf" d="M1461 760 q-26 -28 -12 -58 q22 18 12 58"/>
+            <path class="pl-leaf" d="M1461 760 q30 -24 20 -56 q-28 16 -20 56"/>
+          </g>
+          <path class="pr-cable" d="M1076 636 q30 58 -34 78 q-66 20 -22 58"/>
+        </g>
+      </g>
+
+      <g class="l-grass" id="lGrass"></g>
+      <rect class="l-vig" x="-200" y="-100" width="2000" height="1100"/>
+    </svg>
+    <div class="scene__grain"></div>
+  </div>
+
+  <!-- hero title -->
+  <div class="hero" id="hero">
+    <h1 class="hero__title" id="heroTitle">STUDIO<span class="hero__dot"></span></h1>
+    <p class="hero__sub" id="heroSub">веб-дизайнер и разработчик сайтов</p>
+  </div>
+
+  <!-- desktop icons -->
+  <div class="icons" id="icons"></div>
+
+  <!-- selection marquee -->
+  <div class="marquee" id="marquee" hidden></div>
+
+  <!-- windows mount -->
+  <div class="windows" id="windows"></div>
+
+  <!-- hint -->
+  <div class="hint" id="hint"><kbd>Двойной клик</kbd> по папке — откроется окно</div>
+</main>
+
+<!-- ══ DOCK ══════════════════════════════════════════════ -->
+<nav class="dock" id="dock" hidden aria-label="Док"></nav>
+
+<!-- ══ CONTEXT MENU ══════════════════════════════════════ -->
+<div class="ctx" id="ctx" hidden role="menu"></div>
+
+<!-- ══ TOAST ═════════════════════════════════════════════ -->
+<div class="toast" id="toast" hidden></div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/scene.js"></script>
+<script src="assets/js/audio.js"></script>
+<script src="assets/js/wm.js"></script>
+<script src="assets/js/apps.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
