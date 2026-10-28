@@ -1,0 +1,50 @@
+{
+  "data": {
+    "requestId": "test",
+    "totalResultCount": 3,
+    "items": [
+      {
+        "type": "business",
+        "id": "1001",
+        "title": "Барбершоп Борода",
+        "address": "ул. Баумана, 10",
+        "fullAddress": "Россия, Казань, улица Баумана, 10",
+        "coordinates": [49.12, 55.79],
+        "categories": [{"name": "Барбершоп", "class": "barber"}],
+        "phones": [{"number": "+7 (843) 111-22-33", "value": "+78431112233"}],
+        "urls": ["https://vk.com/boroda_kzn"],
+        "socialLinks": [],
+        "ratingData": {"ratingCount": 12, "ratingValue": 4.3, "reviewCount": 9},
+        "workingTimeText": "Ежедневно, 10:00–21:00"
+      },
+      {
+        "type": "business",
+        "id": "1002",
+        "title": "Стоматология Улыбка",
+        "address": "пр. Победы, 5",
+        "coordinates": [49.2, 55.8],
+        "categories": [{"name": "Стоматологическая клиника"}, {"name": "Имплантация зубов"}],
+        "phones": ["+7 (843) 222-33-44"],
+        "urls": [{"value": "http://ulybka-kzn.ru"}],
+        "socialLinks": [{"type": "vkontakte", "href": "https://vk.com/ulybka", "readableHref": "vk.com/ulybka"}],
+        "ratingData": {"ratingCount": 410, "ratingValue": 4.9, "reviewCount": 280}
+      },
+      {
+        "type": "toponym",
+        "id": "t1",
+        "title": "Казань",
+        "address": "Россия, Казань"
+      }
+    ]
+  },
+  "nested": {
+    "again": [
+      {
+        "type": "business",
+        "id": "1001",
+        "title": "Барбершоп Борода",
+        "phones": [{"number": "+7 (999) 000-00-00"}]
+      }
+    ]
+  }
+}
