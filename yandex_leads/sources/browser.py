@@ -157,15 +157,24 @@ class BrowserCollector:
         city: str = "",
         limit: int = 100,
         on_found: Callable[[Business], None] | None = None,
+        skip_ids: set[str] | None = None,
     ) -> list[Business]:
-        """Ищет query (+ город) и листает выдачу, пока не наберёт limit организаций."""
+        """Ищет query (+ город) и листает выдачу, пока не наберёт limit организаций.
+
+        skip_ids — уже собранные ранее: они не считаются в limit и не возвращаются,
+        поэтому выдача листается глубже, до новых компаний.
+        """
         page = await self._ctx.new_page()
+        skip = skip_ids or set()
         found: dict[str, Business] = {}
+        skipped: set[str] = set()
         pending: list[asyncio.Task] = []
 
         def add(items: list[Business]) -> None:
             for b in items:
-                if b.org_id in found:
+                if b.org_id in skip:
+                    skipped.add(b.org_id)
+                elif b.org_id in found:
                     merge(found[b.org_id], b)
                 else:
                     found[b.org_id] = b
@@ -194,14 +203,14 @@ class BrowserCollector:
 
             stale = 0
             while len(found) < limit and stale < 5:
-                before = len(found)
+                before = len(found) + len(skipped)
                 await _scroll_list(page)
                 await self._pause()
                 await _wait_captcha(page, self.headless, self.captcha_timeout)
                 if pending:
                     await asyncio.gather(*pending)
                     pending.clear()
-                stale = stale + 1 if len(found) == before else 0
+                stale = stale + 1 if len(found) + len(skipped) == before else 0
             if pending:
                 await asyncio.gather(*pending)
         finally:

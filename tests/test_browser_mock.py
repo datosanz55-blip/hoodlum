@@ -38,7 +38,7 @@ PAGE = """<!doctype html><html><body>
 </script></body></html>"""
 
 
-async def run(tmp_path):
+async def run(tmp_path, limit=12, skip_ids=None):
     state = json.dumps({"stack": [{"results": {"items": [item(i) for i in range(1, 6)]}}]})
 
     async def fulfill(route):
@@ -60,7 +60,7 @@ async def run(tmp_path):
         pytest.skip(f"браузер недоступен: {e}")
     try:
         await bc._ctx.route("https://yandex.ru/**", fulfill)
-        return await bc.search("салон", "Казань", limit=12)
+        return await bc.search("салон", "Казань", limit=limit, skip_ids=skip_ids)
     finally:
         await bc.__aexit__()
 
@@ -72,3 +72,8 @@ def test_browser_collects_state_and_scroll(tmp_path):
     assert ids[:5] == ["1", "2", "3", "4", "5"]  # из state-view
     assert all(b.city == "Казань" and b.query == "салон" for b in found)
     assert found[0].phones == ["+7 900 000-00-01"]
+
+
+def test_browser_skips_already_collected(tmp_path):
+    found = asyncio.run(run(tmp_path, limit=5, skip_ids={"1", "2", "3", "4", "5", "7"}))
+    assert [b.org_id for b in found] == ["6", "8", "9", "10", "11"]

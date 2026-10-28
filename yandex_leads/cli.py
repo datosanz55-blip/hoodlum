@@ -56,7 +56,7 @@ async def collect_browser(args, queries: list[str], cities: list[str], raw: Path
             for q in queries:
                 log(f"→ Ищу «{q}» {city}".rstrip())
                 try:
-                    items = await bc.search(q, city, args.limit)
+                    items = await bc.search(q, city, args.limit, skip_ids=args.seen | set(result))
                 except BlockedError as e:
                     log(f"  ✗ {e}")
                     return list(result.values())
@@ -89,7 +89,7 @@ def collect_api(args, queries: list[str], cities: list[str], raw: Path) -> list[
         for city in cities:
             for q in queries:
                 log(f"→ API: «{q}» {city}".rstrip())
-                items = api.search(q, city, args.limit)
+                items = api.search(q, city, args.limit, skip_ids=args.seen | set(result))
                 new = [b for b in items if b.org_id not in result]
                 log(f"  найдено {len(items)}, новых {len(new)}")
                 for b in new:
@@ -169,6 +169,8 @@ def main(argv: list[str] | None = None) -> None:
                    help="прокси для запросов к Яндексу: http://user:pass@host:port или socks5://host:port "
                         "(или YL_PROXY в .env)")
     c.add_argument("--raw", default="data/raw.jsonl", help="куда дописывать сырые данные")
+    c.add_argument("--only-new", action="store_true",
+                   help="пропускать компании, которые уже есть в --raw (для ежедневного запуска)")
     add_common(c)
 
     a = sub.add_parser("analyze", help="пересчитать лиды из сохранённого raw.jsonl")
@@ -187,6 +189,10 @@ def main(argv: list[str] | None = None) -> None:
         parser.error("укажите хотя бы один запрос: -q \"барбершоп\" или --queries-file")
     args.proxy = args.proxy or os.environ.get("YL_PROXY") or None
     raw = Path(args.raw)
+    args.seen = set()
+    if args.only_new and raw.exists():
+        args.seen = {b.org_id for b in load_raw(raw)}
+        log(f"Уже собрано ранее: {len(args.seen)} — их пропускаю")
     if args.source == "api":
         businesses = collect_api(args, queries, cities, raw)
     else:

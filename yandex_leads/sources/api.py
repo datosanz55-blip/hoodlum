@@ -62,6 +62,7 @@ class ApiCollector:
         city: str = "",
         limit: int = 100,
         on_found: Callable[[Business], None] | None = None,
+        skip_ids: set[str] | None = None,
     ) -> list[Business]:
         text = f"{query} {city}".strip()
         found: dict[str, Business] = {}
@@ -84,7 +85,7 @@ class ApiCollector:
             features = resp.json().get("features") or []
             for f in features:
                 b = business_from_feature(f, query, city)
-                if b and b.org_id not in found:
+                if b and b.org_id not in found and b.org_id not in (skip_ids or ()):
                     found[b.org_id] = b
                     if on_found:
                         on_found(b)

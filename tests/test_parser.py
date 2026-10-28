@@ -159,3 +159,13 @@ def test_playwright_proxy_parsing():
     }
     assert playwright_proxy("socks5://host:1080") == {"server": "socks5://host:1080"}
     assert playwright_proxy("5.6.7.8:3128") == {"server": "http://5.6.7.8:3128"}
+
+
+def test_api_search_skips_seen_ids():
+    from yandex_leads.sources.api import ApiCollector
+
+    payload = load("api_response.json")
+    api = ApiCollector("key")
+    api.client = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200, json=payload)))
+    found = api.search("автосервис", "Самара", limit=10, skip_ids={"2001"})
+    assert [b.org_id for b in found] == ["2002"]
