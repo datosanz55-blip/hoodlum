@@ -15,7 +15,7 @@ import random
 import sys
 from pathlib import Path
 from typing import Callable
-from urllib.parse import quote
+from urllib.parse import quote, unquote, urlparse
 
 from ..models import Business
 from .extract import extract_businesses, merge
@@ -26,6 +26,21 @@ LIST_SELECTORS = (".search-list-view .scroll__container", ".scroll__container")
 
 class BlockedError(RuntimeError):
     pass
+
+
+def playwright_proxy(url: str | None) -> dict | None:
+    """'http://user:pass@host:port' → формат proxy для Playwright."""
+    if not url:
+        return None
+    u = urlparse(url if "://" in url else f"http://{url}")
+    if not u.hostname:
+        raise SystemExit(f"Не понял адрес прокси: {url}")
+    server = f"{u.scheme}://{u.hostname}" + (f":{u.port}" if u.port else "")
+    proxy = {"server": server}
+    if u.username:
+        proxy["username"] = unquote(u.username)
+        proxy["password"] = unquote(u.password or "")
+    return proxy
 
 
 def _log(msg: str) -> None:
@@ -98,7 +113,9 @@ class BrowserCollector:
         delay: float = 2.0,
         captcha_timeout: int = 300,
         executable_path: str | None = None,
+        proxy: str | None = None,
     ) -> None:
+        self.proxy = playwright_proxy(proxy)
         self.profile_dir = Path(profile_dir)
         self.headless = headless
         self.delay = delay
@@ -121,6 +138,7 @@ class BrowserCollector:
             locale="ru-RU",
             viewport={"width": 1400, "height": 900},
             executable_path=self.executable_path,
+            proxy=self.proxy,
         )
         return self
 

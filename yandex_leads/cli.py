@@ -50,6 +50,7 @@ async def collect_browser(args, queries: list[str], cities: list[str], raw: Path
         headless=args.headless,
         delay=args.delay,
         executable_path=args.browser_path,
+        proxy=args.proxy,
     ) as bc:
         for city in cities:
             for q in queries:
@@ -80,7 +81,9 @@ async def collect_browser(args, queries: list[str], cities: list[str], raw: Path
 def collect_api(args, queries: list[str], cities: list[str], raw: Path) -> list[Business]:
     from .sources.api import ApiCollector
 
-    api = ApiCollector(args.api_key or os.environ.get("YANDEX_API_KEY", ""), delay=args.delay / 4)
+    api = ApiCollector(
+        args.api_key or os.environ.get("YANDEX_API_KEY", ""), delay=args.delay / 4, proxy=args.proxy
+    )
     result: dict[str, Business] = {}
     try:
         for city in cities:
@@ -162,6 +165,9 @@ def main(argv: list[str] | None = None) -> None:
     c.add_argument("--delay", type=float, default=2.0, help="пауза между действиями, сек")
     c.add_argument("--profile-dir", default=".browser-profile", help="browser: папка профиля")
     c.add_argument("--browser-path", default=None, help="browser: путь к Chrome/Chromium, если нужен свой")
+    c.add_argument("--proxy", default=None,
+                   help="прокси для запросов к Яндексу: http://user:pass@host:port или socks5://host:port "
+                        "(или YL_PROXY в .env)")
     c.add_argument("--raw", default="data/raw.jsonl", help="куда дописывать сырые данные")
     add_common(c)
 
@@ -179,6 +185,7 @@ def main(argv: list[str] | None = None) -> None:
     cities = args.city + _read_lines(args.cities_file) or [""]
     if not queries:
         parser.error("укажите хотя бы один запрос: -q \"барбершоп\" или --queries-file")
+    args.proxy = args.proxy or os.environ.get("YL_PROXY") or None
     raw = Path(args.raw)
     if args.source == "api":
         businesses = collect_api(args, queries, cities, raw)

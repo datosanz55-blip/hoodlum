@@ -148,3 +148,14 @@ def test_analyze_html_unquoted_attributes():
             '<title>Студия</title></head></html>')
     a = analyze_html(SiteAudit(url="x"), html)
     assert a.mobile_viewport and a.meta_description
+
+
+def test_playwright_proxy_parsing():
+    from yandex_leads.sources.browser import playwright_proxy
+
+    assert playwright_proxy(None) is None
+    assert playwright_proxy("http://u:p%40ss@1.2.3.4:8080") == {
+        "server": "http://1.2.3.4:8080", "username": "u", "password": "p@ss",
+    }
+    assert playwright_proxy("socks5://host:1080") == {"server": "socks5://host:1080"}
+    assert playwright_proxy("5.6.7.8:3128") == {"server": "http://5.6.7.8:3128"}

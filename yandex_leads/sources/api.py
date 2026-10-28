@@ -44,12 +44,14 @@ def business_from_feature(feature: dict[str, Any], query: str = "", city: str = 
 
 
 class ApiCollector:
-    def __init__(self, api_key: str, delay: float = 0.3, timeout: float = 15.0) -> None:
+    def __init__(
+        self, api_key: str, delay: float = 0.3, timeout: float = 15.0, proxy: str | None = None
+    ) -> None:
         if not api_key:
             raise SystemExit("Нужен API-ключ: --api-key или переменная YANDEX_API_KEY")
         self.api_key = api_key
         self.delay = delay
-        self.client = httpx.Client(timeout=timeout)
+        self.client = httpx.Client(timeout=timeout, proxy=proxy or None)
 
     def close(self) -> None:
         self.client.close()
