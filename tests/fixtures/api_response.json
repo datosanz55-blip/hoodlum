@@ -1,0 +1,38 @@
+{
+  "type": "FeatureCollection",
+  "properties": {"ResponseMetaData": {"SearchResponse": {"found": 2}}},
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {"type": "Point", "coordinates": [50.1, 53.2]},
+      "properties": {
+        "name": "Автосервис Мотор",
+        "description": "Самара, Московское шоссе, 1",
+        "CompanyMetaData": {
+          "id": "2001",
+          "name": "Автосервис Мотор",
+          "address": "Самара, Московское шоссе, 1",
+          "url": "http://motor63.ru/",
+          "Categories": [{"class": "car service", "name": "Автосервис, автотехцентр"}],
+          "Phones": [{"type": "phone", "formatted": "+7 (846) 300-00-00"}],
+          "Hours": {"text": "пн-сб 9:00–20:00"}
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {"type": "Point", "coordinates": [50.2, 53.3]},
+      "properties": {
+        "name": "Шиномонтаж 24",
+        "description": "Самара, ул. Ново-Садовая, 3",
+        "CompanyMetaData": {
+          "id": "2002",
+          "name": "Шиномонтаж 24",
+          "address": "Самара, ул. Ново-Садовая, 3",
+          "Categories": [{"name": "Шиномонтаж"}],
+          "Phones": [{"formatted": "+7 (846) 400-00-00"}]
+        }
+      }
+    }
+  ]
+}
