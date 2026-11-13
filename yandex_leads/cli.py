@@ -168,11 +168,19 @@ def add_common(p: argparse.ArgumentParser) -> None:
 
 def main(argv: list[str] | None = None) -> None:
     _load_env()
+    if argv is None:
+        argv = sys.argv[1:]
+    if not argv or argv == ["start"]:
+        from .wizard import run
+
+        run()
+        return
     parser = argparse.ArgumentParser(
         prog="yandex_leads",
         description="Сбор организаций с Яндекс Карт и подбор услуг: сайт, контент, SEO/GEO, админ, автоматизация.",
     )
     sub = parser.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("start", help="простой режим: спросит нишу, город и количество")
 
     c = sub.add_parser("collect", help="собрать организации и сделать таблицу лидов")
     c.add_argument("-q", "--query", action="append", default=[], help="что искать, можно несколько раз")

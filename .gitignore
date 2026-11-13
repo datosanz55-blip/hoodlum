@@ -10,3 +10,4 @@ leads_*.csv
 leads_*.json
 .pytest_cache/
 *.egg-info/
+Результаты/
