@@ -133,7 +133,8 @@ def test_export_and_cli_analyze(tmp_path):
     ws = wb["Лиды"]
     rows = list(ws.iter_rows(values_only=True))
     assert rows[0][0] == "Приоритет"
-    assert rows[1][2] == "Барбершоп Борода"  # самый «горячий» лид сверху
+    assert rows[1][3] == "Барбершоп Борода"  # самый «горячий» лид сверху
+    assert rows[0][1] == "Надёжность" and rows[1][1].endswith(("слабая", "нормальная", "сильная"))
     assert "Сводка" in wb.sheetnames
 
     for ext in ("csv", "json"):

@@ -12,12 +12,14 @@ import argparse
 import asyncio
 import os
 import sys
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
 from .analyzer import analyze, parse_services
 from .export import append_raw, load_raw, save_leads
 from .models import Business, Lead
+from .qualify import QualifyOptions, assess, city_centers
 from .site_audit import audit_many, pick_own_site
 
 
@@ -108,12 +110,28 @@ def build_leads(businesses: list[Business], args) -> list[Lead]:
             log(f"→ Проверяю сайты: {len(set(urls))}")
             audits = asyncio.run(audit_many(urls, concurrency=args.concurrency))
     services = parse_services(args.services)
+    opts = QualifyOptions(
+        min_reviews=args.min_reviews, max_km=args.max_km, require_phone=not args.keep_no_phone
+    )
+    centers = city_centers(businesses)
+    rejected: Counter[str] = Counter()
     leads = []
     for b in businesses:
-        lead = analyze(b, audits.get(pick_own_site(b.websites)), me=args.me, services=services or None)
+        audit = audits.get(pick_own_site(b.websites))
+        quality = None
+        if not args.no_filter:
+            quality = assess(b, audit, centers.get(b.city), opts)
+            if quality.reject:
+                rejected[quality.reject] += 1
+                continue
+        lead = analyze(b, audit, me=args.me, services=services or None, quality=quality)
         if lead.offers and lead.score >= args.min_score:
             leads.append(lead)
-    leads.sort(key=lambda l: (-l.score, l.business.name))
+        else:
+            rejected["нечего предложить"] += 1
+    if rejected:
+        log("  отсеяно: " + ", ".join(f"{reason} — {n}" for reason, n in rejected.most_common()))
+    leads.sort(key=lambda l: (l.priority, -(l.quality.score if l.quality else 0) - l.score, l.business.name))
     return leads
 
 
@@ -138,6 +156,12 @@ def add_common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--services", action="append",
                    help="предлагать только эти услуги: site, content, seo, admin, auto (через запятую)")
     p.add_argument("--min-score", type=int, default=1, help="минимальный балл лида")
+    p.add_argument("--min-reviews", type=int, default=5,
+                   help="отсеять компании, у которых меньше стольких отзывов (по умолчанию 5)")
+    p.add_argument("--max-km", type=float, default=20,
+                   help="отсеять компании дальше стольких км от центра города (по умолчанию 20)")
+    p.add_argument("--keep-no-phone", action="store_true", help="не отсеивать компании без телефона")
+    p.add_argument("--no-filter", action="store_true", help="вообще не отсеивать и не оценивать надёжность")
     p.add_argument("--me", default="", help="подпись в конце сообщения: имя, телефон, Telegram")
     p.add_argument("--concurrency", type=int, default=10, help="параллельных проверок сайтов")
 

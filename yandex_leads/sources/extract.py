@@ -83,6 +83,7 @@ def business_from_item(d: dict, query: str = "", city: str = "") -> Business:
         rating_count=_num(rating.get("ratingCount"), int),
         review_count=_num(rating.get("reviewCount"), int),
         hours=hours if isinstance(hours, str) else "",
+        status=d["status"] if isinstance(d.get("status"), str) else "",
         lon=_num(coords[0], float),
         lat=_num(coords[1], float),
         source="browser",
@@ -103,7 +104,7 @@ def extract_businesses(obj: Any, query: str = "", city: str = "") -> list[Busine
 
 def merge(dst: Business, src: Business) -> Business:
     """Дополняет dst данными из src, ничего не затирая."""
-    for name in ("address", "hours", "city", "query"):
+    for name in ("address", "hours", "status", "city", "query"):
         if not getattr(dst, name) and getattr(src, name):
             setattr(dst, name, getattr(src, name))
     for name in ("rating", "rating_count", "review_count", "lat", "lon"):

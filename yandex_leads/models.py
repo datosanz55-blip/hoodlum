@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from .qualify import Quality
 
 
 @dataclass
@@ -23,6 +26,7 @@ class Business:
     rating_count: int | None = None
     review_count: int | None = None
     hours: str = ""
+    status: str = ""
     lat: float | None = None
     lon: float | None = None
     source: str = ""
@@ -86,3 +90,4 @@ class Lead:
     score: int
     priority: str
     pitch: str
+    quality: "Quality | None" = None

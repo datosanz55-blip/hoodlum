@@ -10,10 +10,10 @@ from pathlib import Path
 from .models import Business, Lead
 
 COLUMNS = [
-    ("Приоритет", 10), ("Балл", 7), ("Название", 32), ("Рубрики", 26), ("Город", 14),
-    ("Адрес", 40), ("Телефоны", 22), ("Сайт", 30), ("Соцсети", 30), ("Рейтинг", 9),
-    ("Отзывов", 9), ("Что предложить", 34), ("Почему", 60), ("Черновик сообщения", 70),
-    ("Карточка на Картах", 30), ("Запрос", 18),
+    ("Приоритет", 10), ("Надёжность", 12), ("Потребность", 12), ("Название", 32), ("Рубрики", 26),
+    ("Город", 14), ("Адрес", 40), ("Телефоны", 22), ("Сайт", 30), ("Соцсети", 30), ("Рейтинг", 9),
+    ("Отзывов", 9), ("Почему надёжная", 34), ("Что предложить", 34), ("Почему", 60),
+    ("Черновик сообщения", 70), ("Карточка на Картах", 30), ("Запрос", 18),
 ]
 
 
@@ -21,8 +21,10 @@ def lead_row(lead: Lead) -> list:
     b = lead.business
     socials = list(dict.fromkeys(b.social_links + (lead.audit.social_links if lead.audit else [])))
     reviews = b.review_count if b.review_count is not None else b.rating_count
+    q = lead.quality
     return [
         lead.priority,
+        f"{q.score}/10 {q.label}" if q else "",
         lead.score,
         b.name,
         ", ".join(b.categories),
@@ -33,6 +35,7 @@ def lead_row(lead: Lead) -> list:
         "\n".join(socials),
         b.rating,
         reviews,
+        "\n".join(q.reasons) if q else "",
         "\n".join(o.service for o in lead.offers),
         "\n".join(f"{o.service}: {'; '.join(o.reasons)}" for o in lead.offers),
         lead.pitch,
@@ -60,7 +63,7 @@ def save_xlsx(leads: list[Lead], path: Path) -> None:
 
     fills = {"A": "D1FAE5", "B": "FEF3C7", "C": "F3F4F6"}
     wrap = Alignment(vertical="top", wrap_text=True)
-    link_cols = {8, 15}
+    link_cols = {9, 17}
     for lead in leads:
         ws.append(lead_row(lead))
         r = ws.max_row
@@ -108,6 +111,8 @@ def save_json(leads: list[Lead], path: Path) -> None:
         {
             "priority": l.priority,
             "score": l.score,
+            "quality": {"score": l.quality.score, "label": l.quality.label, "reasons": l.quality.reasons}
+            if l.quality else None,
             "business": l.business.to_dict(),
             "maps_url": l.business.maps_url,
             "own_site": l.own_site,

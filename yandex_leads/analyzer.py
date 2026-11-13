@@ -10,6 +10,7 @@ from datetime import date
 
 from .models import Business, Lead, Offer, SiteAudit
 from .pitch import build_pitch
+from .qualify import Quality
 from .site_audit import pick_own_site
 
 SITE = "Создание сайта"
@@ -47,8 +48,10 @@ def analyze(
     audit: SiteAudit | None = None,
     me: str = "",
     services: set[str] | None = None,
+    quality: Quality | None = None,
 ) -> Lead:
-    """services — если задано, предлагаем только эти услуги."""
+    """services — если задано, предлагаем только эти услуги.
+    quality — оценка надёжности компании; без неё приоритет считается только по проблемам."""
     offers: dict[str, Offer] = {}
 
     def add(service: str, weight: int, reason: str) -> None:
@@ -126,8 +129,15 @@ def analyze(
         key=lambda o: -o.weight,
     )
     score = sum(o.weight for o in offer_list)
-    priority = "A" if score >= 14 else "B" if score >= 8 else "C"
-    lead = Lead(b, audit, own_site, offer_list, score, priority, "")
+    if quality is None:
+        priority = "A" if score >= 14 else "B" if score >= 8 else "C"
+    elif score >= 8 and quality.score >= 5 and not quality.big:
+        priority = "A"  # живая компания с явными проблемами
+    elif score >= 5 and quality.score >= 3:
+        priority = "B"
+    else:
+        priority = "C"
+    lead = Lead(b, audit, own_site, offer_list, score, priority, "", quality)
     lead.pitch = build_pitch(lead, me)
     return lead
 
